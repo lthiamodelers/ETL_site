@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>LTHIA Precalculated Runoff - Developer Guide</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+	<div class="row">
+		<div class="col-sm-12">
+		  <div class="jumbotron">
+			<h1>LTHIA Precalculated Runoff - Developer Guide</h1>
+			<p>This is an instructional page about how to use the simple python LTHIA REST requests.</p>
+		  </div>
+		</div>
+	</div>
+  <div class="row">
+	<ul class="nav nav-tabs">
+	  <li class="active"><a data-toggle="tab" href="#legacy">Legacy Output Format</a></li>
+	  <li><a data-toggle="tab" href="#json">JSON</a></li>
+	</ul>
+	<div class="tab-content col-sm-12">
+	  <div id="legacy" class="tab-pane fade in active">
+		<h3>Legacy Output Format</h3>
+		<!-- start accordion -->
+		 <div class="panel-group" id="accordion">
+		  <div class="panel panel-default">
+			<div class="panel-heading">
+			  <h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+				Sum of HUC12s</a>
+			  </h4>
+			</div>
+			<div id="collapse1" class="panel-collapse collapse in">
+			  <div class="panel-body">
+                    <p><h3><strong>Path:</strong></h3> <code>/cgi-bin/lthia_sum_huc12s.py</code></p>
+                    <p><h3><strong>Query Parameters:</strong></h3>
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Possible values</th>
+                            <th>Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>huclist</td>
+                            <td>An comma-separated list of HUC12 codes, such as "050800012004,050800012003,050800012002"</td>
+                            <td>The list of HUC12 codes over which to run LTHIA and sum results</td>
+                          </tr>
+                          <tr>
+                            <td>hucX, where X is a number starting at 1 counting up sequentially</td>
+                            <td>A single HUC12 code, such as "050800012004"</td>
+                            <td>One item in the list of HUC12 codes over which to run LTHIA and sum results</td>
+                          </tr>
+                        </tbody>
+                    </table>
+                    </p>
+                    <p><h3><strong>Notes:</strong></h3>
+                    Either the "huclist" argument, or many "hucX" arguments, such as "?huc1=050800012004&huc2=050800012003&huc3=050800012002", are required.
+                    </p>
+                    <p><h3><strong>Legacy notes:</strong></h3> Analogous to the old scripts <code>/cgi-bin/tippthuc.py</code> and <code>/cgi-bin/msu4.py</code></p>
+                    <p><h3><strong>Examples:</strong></h3></p>
+                    <pre>
+<a target="_blank" href="/cgi-bin/lthia_sum_huc12s.py?huclist=050800012004">/cgi-bin/lthia_sum_huc12s.py?huclist=050800012004</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_huc12s.py?huclist=050800012004,050800012003">/cgi-bin/lthia_sum_huc12s.py?huclist=050800012004,050800012003</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_huc12s.py?huclist=050800012003">/cgi-bin/lthia_sum_huc12s.py?huclist=050800012003</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_huc12s.py?huc1=050800012004">/cgi-bin/lthia_sum_huc12s.py?huc1=050800012004</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_huc12s.py?huc1=050800012004&huc2=050800012003">/cgi-bin/lthia_sum_huc12s.py?huc1=050800012004&huc2=050800012003</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_huc12s.py?huc1=050800012003">/cgi-bin/lthia_sum_huc12s.py?huc1=050800012003</a>
+                    </pre>
+              </div>
+			</div>
+		  </div>
+		  <div class="panel panel-default">
+			<div class="panel-heading">
+			  <h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+				Sum of Counties</a>
+			  </h4>
+			</div>
+			<div id="collapse2" class="panel-collapse collapse">
+			  <div class="panel-body">
+                    <p><h3><strong>Path:</strong></h3> <code>/cgi-bin/lthia_sum_counties.py</code></p>
+                    <p><h3><strong>Query Parameters:</strong></h3>
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Possible values</th>
+                            <th>Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>fipslist</td>
+                            <td>An comma-separated list of 5-digit FIPS codes, such as "39023,39109,39021,39149"</td>
+                            <td>The list of 5-digit FIPS codes over which to run LTHIA and sum results</td>
+                          </tr>
+                          <tr>
+                            <td>fipsX, where X is a number starting at 1 counting up sequentially</td>
+                            <td>A single 5-digit FIPS code, such as "39023"</td>
+                            <td>One item in the list of 5-digit FIPS codes over which to run LTHIA and sum results</td>
+                          </tr>
+                        </tbody>
+                    </table>
+                    </p>
+                    <p><h3><strong>Notes:</strong></h3>
+                    Either the "fipslist" argument, or many "fipsX" arguments, such as "?fips1=39023&fips2=39109&fips3=39021", are required.
+                    </p>
+                    <p><h3><strong>Legacy notes:</strong></h3> This is a new script, no previous script was performing the same function.</p>
+                    <p><h3><strong>Examples:</strong></h3></p>
+                    <pre>
+<a target="_blank" href="/cgi-bin/lthia_sum_counties.py?fipslist=39023">/cgi-bin/lthia_sum_counties.py?fipslist=39023</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_counties.py?fipslist=39023,39109">/cgi-bin/lthia_sum_counties.py?fipslist=39023,39109</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_counties.py?fipslist=39109">/cgi-bin/lthia_sum_counties.py?fipslist=39109</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_counties.py?fips1=39023">/cgi-bin/lthia_sum_counties.py?fips1=39023</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_counties.py?fips1=39023&fips2=39109">/cgi-bin/lthia_sum_counties.py?fips1=39023&fips2=39109</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_counties.py?fips1=39109">/cgi-bin/lthia_sum_counties.py?fips1=39109</a>
+                    </pre>
+              </div>
+			</div>
+		  </div>
+		  <div class="panel panel-default">
+			<div class="panel-heading">
+			  <h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+				Scenario Chain</a>
+			  </h4>
+			</div>
+			<div id="collapse3" class="panel-collapse collapse">
+			  <div class="panel-body">
+                    <p><h3><strong>Path:</strong></h3> <code>/cgi-bin/lthia_scenario_chain.py</code></p>
+                    <p><h3><strong>Query Parameters:</strong></h3>
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Possible values</th>
+                            <th>Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>sessionid</td>
+                            <td>A short string containing characters to denote a sessionid for temporary files, useful while testing</td>
+                            <td>Determines the names of temporary geodatabase entries. Do not concurrently use the same session id for two simultaneous requests.</td>
+                          </tr>
+                          <tr>
+                            <td>coords</td>
+                            <td>A pipe-bar separated list of comma separated <strong>Longitude,Latitude</strong> pairs</td>
+                            <td>The points must define a polygon. Determines the initial, overall bounds from which to fetch data to run LTHIA</td>
+                          </tr>
+                          <tr>
+                            <td>changecoordsX, where X is a number starting at 1 counting up sequentially</td>
+                            <td>A pipe-bar separated list of comma separated <strong>Longitude,Latitude</strong> pairs</td>
+                            <td>The points must define a polygon. For each "usetypeX", this polygon is the area in which land-use values will be replaced with the new "usetype" ID.</td>
+                          </tr>
+                          <tr>
+                            <td>changecoords</td>
+                            <td>A pipe-bar separated list of comma separated <strong>Longitude,Latitude</strong> pairs</td>
+                            <td>The points must define a polygon. This polygon is the default area in which land-use values will be replaced with the new "usetype" ID, if no "changecoordsX" is given. Never include the "changecoords" argument twice in the same query.</td>
+                          </tr>
+                          <tr>
+                            <td>usetypeX, where X is a number starting at 1 counting up sequentially</td>
+                            <td>A land-use integer ID from the land-use table that is not provided here</td>
+                            <td>Determines which land use will be used for a replacement on the map</td>
+                          </tr>
+                        </tbody>
+                    </table>
+                    </p>
+                    <p><h3><strong>Notes:</strong></h3>
+                    If no "<code>usetype1=24&changecoords1= -83.4293306587,43.1093973534|-83.4298674715,43.1095322567|-83.4299941965,43.1098185684</code>" change scenarios are given, then the result of the script is simply the result of running LTHIA on the "coords" argument polygon.
+                    </p>
+                    <p>The script requires either a set of <code>changecoords1</code>, <code>changecoords2</code>, etc. for each <code>usetype1</code>, <code>usetype2</code>, OR a <code>changecoords</code> default value with no number that applies to all <code>usetypeX</code> arguments without corresponding changecoords.</p>
+                    <p>Across the different change sets being iterated, such as "<code>changecoords1</code>", "<code>changecoords2</code>", etc., the changes in the previous set will be remembered for the new set. This is why the script is called 'Scenario Chain'. This is a totally different behavior than the 'Multiple Single Scenarios' script. See diagram.</p>
+                    <p><h3><strong>Legacy notes:</strong></h3> Analogous to the old script <code>/cgi-bin/tipptlux.py</code></p>
+                    <h3><strong>Diagram:</strong></h3>
+                    <img src="chainScenarios.png" alt="Chain Scenarios Diagram" width="1156" height="183">
+                    <p><h3><strong>Examples:</strong></h3></p>
+                    <pre>
+<a target="_blank" href="/cgi-bin/lthia_scenario_chain.py?sessionid=Projectbig3&coords= -83.4293306587,43.1093973534|-83.4298674715,43.1095322567|-83.4299941965,43.1098185684|-83.4296076737,43.1101984135|-83.4297016006,43.1109529007|-83.4300360889,43.1117085965|-83.4300136254,43.1118900617|-83.4300272922,43.1122398431|-83.4297632881,43.1123373291|-83.4292895578,43.1124838093|-83.4288664631,43.1128592202|-83.4288767252,43.1131219851|-83.4279722459,43.1138230459|-83.4277416756,43.1141629412|-83.4273038954,43.1143725123|-83.4266055779,43.1141574423|-83.4258946825,43.1136858403|-83.4252771664,43.1135868121|-83.4251690626,43.113399129|-83.4249373929,43.1130623288|-83.4251078186,43.1117762769|-83.4252487664,43.1115142996|-83.4254535811,43.1110768837|-83.4267456099,43.1110077773|-83.4271527654,43.1106940205|-83.4277002169,43.1104560282|-83.4289708517,43.1096746437|-83.4293306587,43.1093973534&changecoords=-83.42708270721293,43.1143408892082|-83.42622440032815,43.11387097002802|-83.42635314636087,43.11336971892523|-83.42721145324565,43.113181748703234|-83.42725436858989,43.11380831386469|-83.42708270721293,43.1143408892082&usetype1=241">/cgi-bin/lthia_scenario_chain.py?sessionid=Projectbig3&coords= -83.4293306587,43.1093973534|-83.4298674715,43.1095322567|-83.4299941965,43.1098185684|-83.4296076737,43.1101984135|-83.4297016006,43.1109529007|-83.4300360889,43.1117085965|-83.4300136254,43.1118900617|-83.4300272922,43.1122398431|-83.4297632881,43.1123373291|-83.4292895578,43.1124838093|-83.4288664631,43.1128592202|-83.4288767252,43.1131219851|-83.4279722459,43.1138230459|-83.4277416756,43.1141629412|-83.4273038954,43.1143725123|-83.4266055779,43.1141574423|-83.4258946825,43.1136858403|-83.4252771664,43.1135868121|-83.4251690626,43.113399129|-83.4249373929,43.1130623288|-83.4251078186,43.1117762769|-83.4252487664,43.1115142996|-83.4254535811,43.1110768837|-83.4267456099,43.1110077773|-83.4271527654,43.1106940205|-83.4277002169,43.1104560282|-83.4289708517,43.1096746437|-83.4293306587,43.1093973534&changecoords=-83.42708270721293,43.1143408892082|-83.42622440032815,43.11387097002802|-83.42635314636087,43.11336971892523|-83.42721145324565,43.113181748703234|-83.42725436858989,43.11380831386469|-83.42708270721293,43.1143408892082&usetype1=241</a>
+<a target="_blank" href="/cgi-bin/lthia_scenario_chain.py?sessionid=Project17a&coords=-84.923,42.909|-84.746,42.893|-84.759,42.803|-84.935,42.823&changecoords1=-84.805,42.88|-84.778,42.88|-84.779,42.857|-84.805,42.857&usetype1=22&changecoords2=-84.913,42.863|-84.901,42.862|-84.902,42.831|-84.914,42.832&usetype2=232&changecoords3=-84.863,42.843|-84.809,42.843|-84.809,42.824|-84.863,42.824&usetype3=232&changecoords4=-84.913,42.899|-84.891,42.899|-84.891,42.884|-84.913,42.884&usetype4=22">/cgi-bin/lthia_scenario_chain.py?sessionid=Project17a&coords=-84.923,42.909|-84.746,42.893|-84.759,42.803|-84.935,42.823&changecoords1=-84.805,42.88|-84.778,42.88|-84.779,42.857|-84.805,42.857&usetype1=22&changecoords2=-84.913,42.863|-84.901,42.862|-84.902,42.831|-84.914,42.832&usetype2=232&changecoords3=-84.863,42.843|-84.809,42.843|-84.809,42.824|-84.863,42.824&usetype3=232&changecoords4=-84.913,42.899|-84.891,42.899|-84.891,42.884|-84.913,42.884&usetype4=22</a>
+                    </pre>
+              </div>
+			</div>
+		  </div>
+		  <div class="panel panel-default">
+			<div class="panel-heading">
+			  <h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion" href="#collapse4">
+				Multiple Single Scenarios</a>
+			  </h4>
+			</div>
+			<div id="collapse4" class="panel-collapse collapse">
+			  <div class="panel-body">
+                    <p><h3><strong>Path:</strong></h3> <code>/cgi-bin/lthia_scenario_single.py</code></p>
+                    <p><h3><strong>Query Parameters:</strong></h3>
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Possible values</th>
+                            <th>Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>sessionid</td>
+                            <td>A short string containing characters to denote a sessionid for temporary files, useful while testing</td>
+                            <td>Determines the names of temporary geodatabase entries. Do not concurrently use the same session id for two simultaneous requests.</td>
+                          </tr>
+                          <tr>
+                            <td>coords</td>
+                            <td>A pipe-bar separated list of comma separated <strong>Longitude,Latitude</strong> pairs</td>
+                            <td>The points must define a polygon. Determines the initial, overall bounds from which to fetch data to run LTHIA</td>
+                          </tr>
+                          <tr>
+                            <td>changecoordsX, where X is a number starting at 1 counting up sequentially</td>
+                            <td>A pipe-bar separated list of comma separated <strong>Longitude,Latitude</strong> pairs</td>
+                            <td>The points must define a polygon. For each "usetypeX", this polygon is the area in which land-use values will be replaced with the new "usetype" ID.</td>
+                          </tr>
+                          <tr>
+                            <td>changecoords</td>
+                            <td>A pipe-bar separated list of comma separated <strong>Longitude,Latitude</strong> pairs</td>
+                            <td>The points must define a polygon. This polygon is the default area in which land-use values will be replaced with the new "usetype" ID, if no "changecoordsX" is given. Never include the "changecoords" argument twice in the same query.</td>
+                          </tr>
+                          <tr>
+                            <td>usetypeX, where X is a number starting at 1 counting up sequentially</td>
+                            <td>A land-use integer ID from the land-use table that is not provided here</td>
+                            <td>Determines which land use will be used for a replacement on the map</td>
+                          </tr>
+                        </tbody>
+                    </table>
+                    </p>
+                     <p><h3><strong>Notes:</strong></h3>
+                    If no "<code>usetype1=24&changecoords1= -83.4293306587,43.1093973534|-83.4298674715,43.1095322567|-83.4299941965,43.1098185684</code>" change scenarios are given, then the result of the script is simply the result of running LTHIA on the "coords" argument polygon.
+                    </p>
+                    <p>The script requires either a set of <code>changecoords1</code>, <code>changecoords2</code>, etc. for each <code>usetype1</code>, <code>usetype2</code>, OR a <code>changecoords</code> default value with no number that applies to all <code>usetypeX</code> arguments without corresponding changecoords.</p>
+                    <p>Across the different change sets being iterated, such as "<code>changecoords1</code>", "<code>changecoords2</code>", etc., each change set is run as a totally unique scenario starting from the original LTHIA map data. See diagram.</p>
+                    <p><h3><strong>Legacy notes:</strong></h3> Analogous to the old script <code>/cgi-bin/msu3.py</code></p>
+                    <h3><strong>Diagram:</strong></h3>
+                    <img src="singleScenarios.png" alt="Chain Scenarios Diagram" width="1156" height="183">
+                    <p><h3><strong>Examples:</strong></h3></p>
+                    <pre>
+<a target="_blank" href="/cgi-bin/lthia_scenario_single.py?sessionid=Projectbig3&coords= -83.4293306587,43.1093973534|-83.4298674715,43.1095322567|-83.4299941965,43.1098185684|-83.4296076737,43.1101984135|-83.4297016006,43.1109529007|-83.4300360889,43.1117085965|-83.4300136254,43.1118900617|-83.4300272922,43.1122398431|-83.4297632881,43.1123373291|-83.4292895578,43.1124838093|-83.4288664631,43.1128592202|-83.4288767252,43.1131219851|-83.4279722459,43.1138230459|-83.4277416756,43.1141629412|-83.4273038954,43.1143725123|-83.4266055779,43.1141574423|-83.4258946825,43.1136858403|-83.4252771664,43.1135868121|-83.4251690626,43.113399129|-83.4249373929,43.1130623288|-83.4251078186,43.1117762769|-83.4252487664,43.1115142996|-83.4254535811,43.1110768837|-83.4267456099,43.1110077773|-83.4271527654,43.1106940205|-83.4277002169,43.1104560282|-83.4289708517,43.1096746437|-83.4293306587,43.1093973534&changecoords=-83.42708270721293,43.1143408892082|-83.42622440032815,43.11387097002802|-83.42635314636087,43.11336971892523|-83.42721145324565,43.113181748703234|-83.42725436858989,43.11380831386469|-83.42708270721293,43.1143408892082&usetype1=241">/cgi-bin/lthia_scenario_chain.py?sessionid=Projectbig3&coords= -83.4293306587,43.1093973534|-83.4298674715,43.1095322567|-83.4299941965,43.1098185684|-83.4296076737,43.1101984135|-83.4297016006,43.1109529007|-83.4300360889,43.1117085965|-83.4300136254,43.1118900617|-83.4300272922,43.1122398431|-83.4297632881,43.1123373291|-83.4292895578,43.1124838093|-83.4288664631,43.1128592202|-83.4288767252,43.1131219851|-83.4279722459,43.1138230459|-83.4277416756,43.1141629412|-83.4273038954,43.1143725123|-83.4266055779,43.1141574423|-83.4258946825,43.1136858403|-83.4252771664,43.1135868121|-83.4251690626,43.113399129|-83.4249373929,43.1130623288|-83.4251078186,43.1117762769|-83.4252487664,43.1115142996|-83.4254535811,43.1110768837|-83.4267456099,43.1110077773|-83.4271527654,43.1106940205|-83.4277002169,43.1104560282|-83.4289708517,43.1096746437|-83.4293306587,43.1093973534&changecoords=-83.42708270721293,43.1143408892082|-83.42622440032815,43.11387097002802|-83.42635314636087,43.11336971892523|-83.42721145324565,43.113181748703234|-83.42725436858989,43.11380831386469|-83.42708270721293,43.1143408892082&usetype1=241</a>
+<a target="_blank" href="/cgi-bin/lthia_scenario_single.py?sessionid=Project18a&coords=-84.923,42.909|-84.746,42.893|-84.759,42.803|-84.935,42.823&changecoords1=-84.805,42.88|-84.778,42.88|-84.779,42.857|-84.805,42.857&usetype1=22&changecoords2=-84.913,42.863|-84.901,42.862|-84.902,42.831|-84.914,42.832&usetype2=232&changecoords3=-84.863,42.843|-84.809,42.843|-84.809,42.824|-84.863,42.824&usetype3=232&changecoords4=-84.913,42.899|-84.891,42.899|-84.891,42.884|-84.913,42.884&usetype4=22">/cgi-bin/lthia_scenario_single.py?sessionid=Project18a&coords=-84.923,42.909|-84.746,42.893|-84.759,42.803|-84.935,42.823&changecoords1=-84.805,42.88|-84.778,42.88|-84.779,42.857|-84.805,42.857&usetype1=22&changecoords2=-84.913,42.863|-84.901,42.862|-84.902,42.831|-84.914,42.832&usetype2=232&changecoords3=-84.863,42.843|-84.809,42.843|-84.809,42.824|-84.863,42.824&usetype3=232&changecoords4=-84.913,42.899|-84.891,42.899|-84.891,42.884|-84.913,42.884&usetype4=22</a>
+                    </pre>
+                </div>
+			</div>
+		  </div>
+		</div> 
+		<!-- end accordion -->
+	  </div>
+      <div id="json" class="tab-pane fade">
+        <h3>JSON</h3>
+		<!-- start accordion -->
+		 <div class="panel-group" id="accordion2">
+		  <div class="panel panel-default">
+			<div class="panel-heading">
+			  <h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion2" href="#collapse1j">
+				Sum of HUC12s</a>
+			  </h4>
+			</div>
+			<div id="collapse1j" class="panel-collapse collapse in">
+			  <div class="panel-body">
+                    <p><h3><strong>Path:</strong></h3> <code>/cgi-bin/lthia_sum_huc12s_json.py</code></p>
+                    <p><h3><strong>Query Parameters:</strong></h3>
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Possible values</th>
+                            <th>Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>huclist</td>
+                            <td>An comma-separated list of HUC12 codes, such as "050800012004,050800012003,050800012002"</td>
+                            <td>The list of HUC12 codes over which to run LTHIA and sum results</td>
+                          </tr>
+                          <tr>
+                            <td>hucX, where X is a number starting at 1 counting up sequentially</td>
+                            <td>A single HUC12 code, such as "050800012004"</td>
+                            <td>One item in the list of HUC12 codes over which to run LTHIA and sum results</td>
+                          </tr>
+                        </tbody>
+                    </table>
+                    </p>
+                    <p><h3><strong>Notes:</strong></h3>
+                    Either the "huclist" argument, or many "hucX" arguments, such as "?huc1=050800012004&huc2=050800012003&huc3=050800012002", are required.
+                    </p>
+                    <p><h3><strong>Legacy notes:</strong></h3> Analogous to the old scripts <code>/cgi-bin/tippthuc.py</code> and <code>/cgi-bin/msu4.py</code> BUT now the output is JSON format.</p>
+                    <p><h3><strong>Examples:</strong></h3></p>
+                    <pre>
+<a target="_blank" href="/cgi-bin/lthia_sum_huc12s_json.py?huclist=050800012004">/cgi-bin/lthia_sum_huc12s_json.py?huclist=050800012004</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_huc12s_json.py?huclist=050800012004,050800012003">/cgi-bin/lthia_sum_huc12s_json.py?huclist=050800012004,050800012003</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_huc12s_json.py?huclist=050800012003">/cgi-bin/lthia_sum_huc12s_json.py?huclist=050800012003</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_huc12s_json.py?huc1=050800012004">/cgi-bin/lthia_sum_huc12s_json.py?huc1=050800012004</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_huc12s_json.py?huc1=050800012004&huc2=050800012003">/cgi-bin/lthia_sum_huc12s_json.py?huc1=050800012004&huc2=050800012003</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_huc12s_json.py?huc1=050800012003">/cgi-bin/lthia_sum_huc12s_json.py?huc1=050800012003</a>
+                    </pre>
+              </div>
+			</div>
+		  </div>
+		  <div class="panel panel-default">
+			<div class="panel-heading">
+			  <h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion2" href="#collapse2j">
+				Sum of Counties</a>
+			  </h4>
+			</div>
+			<div id="collapse2j" class="panel-collapse collapse">
+			  <div class="panel-body">
+                    <p><h3><strong>Path:</strong></h3> <code>/cgi-bin/lthia_sum_counties_json.py</code></p>
+                    <p><h3><strong>Query Parameters:</strong></h3>
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Possible values</th>
+                            <th>Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>fipslist</td>
+                            <td>An comma-separated list of 5-digit FIPS codes, such as "39023,39109,39021,39149"</td>
+                            <td>The list of 5-digit FIPS codes over which to run LTHIA and sum results</td>
+                          </tr>
+                          <tr>
+                            <td>fipsX, where X is a number starting at 1 counting up sequentially</td>
+                            <td>A single 5-digit FIPS code, such as "39023"</td>
+                            <td>One item in the list of 5-digit FIPS codes over which to run LTHIA and sum results</td>
+                          </tr>
+                        </tbody>
+                    </table>
+                    </p>
+                    <p><h3><strong>Notes:</strong></h3>
+                    Either the "fipslist" argument, or many "fipsX" arguments, such as "?fips1=39023&fips2=39109&fips3=39021", are required.
+                    </p>
+                    <p><h3><strong>Legacy notes:</strong></h3> This is a new script, no previous script was performing the same function.</p>
+                    <p><h3><strong>Examples:</strong></h3></p>
+                    <pre>
+<a target="_blank" href="/cgi-bin/lthia_sum_counties_json.py?fipslist=39023">/cgi-bin/lthia_sum_counties_json.py?fipslist=39023</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_counties_json.py?fipslist=39023,39109">/cgi-bin/lthia_sum_counties_json.py?fipslist=39023,39109</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_counties_json.py?fipslist=39109">/cgi-bin/lthia_sum_counties_json.py?fipslist=39109</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_counties_json.py?fips1=39023">/cgi-bin/lthia_sum_counties_json.py?fips1=39023</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_counties_json.py?fips1=39023&fips2=39109">/cgi-bin/lthia_sum_counties_json.py?fips1=39023&fips2=39109</a>
+<a target="_blank" href="/cgi-bin/lthia_sum_counties_json.py?fips1=39109">/cgi-bin/lthia_sum_counties_json.py?fips1=39109</a>
+                    </pre>
+              </div>
+			</div>
+		  </div>
+		  <div class="panel panel-default">
+			<div class="panel-heading">
+			  <h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion2" href="#collapse3j">
+				Scenario Chain</a>
+			  </h4>
+			</div>
+			<div id="collapse3j" class="panel-collapse collapse">
+			  <div class="panel-body">
+                    <p><h3><strong>Path:</strong></h3> <code>/cgi-bin/lthia_scenario_chain_json.py</code></p>
+                    <p><h3><strong>Query Parameters:</strong></h3>
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Possible values</th>
+                            <th>Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>sessionid</td>
+                            <td>A short string containing characters to denote a sessionid for temporary files, useful while testing</td>
+                            <td>Determines the names of temporary geodatabase entries. Do not concurrently use the same session id for two simultaneous requests.</td>
+                          </tr>
+                          <tr>
+                            <td>coords</td>
+                            <td>A pipe-bar separated list of comma separated <strong>Longitude,Latitude</strong> pairs</td>
+                            <td>The points must define a polygon. Determines the initial, overall bounds from which to fetch data to run LTHIA</td>
+                          </tr>
+                          <tr>
+                            <td>changecoordsX, where X is a number starting at 1 counting up sequentially</td>
+                            <td>A pipe-bar separated list of comma separated <strong>Longitude,Latitude</strong> pairs</td>
+                            <td>The points must define a polygon. For each "usetypeX", this polygon is the area in which land-use values will be replaced with the new "usetype" ID.</td>
+                          </tr>
+                          <tr>
+                            <td>changecoords</td>
+                            <td>A pipe-bar separated list of comma separated <strong>Longitude,Latitude</strong> pairs</td>
+                            <td>The points must define a polygon. This polygon is the default area in which land-use values will be replaced with the new "usetype" ID, if no "changecoordsX" is given. Never include the "changecoords" argument twice in the same query.</td>
+                          </tr>
+                          <tr>
+                            <td>usetypeX, where X is a number starting at 1 counting up sequentially</td>
+                            <td>A land-use integer ID from the land-use table that is not provided here</td>
+                            <td>Determines which land use will be used for a replacement on the map</td>
+                          </tr>
+                        </tbody>
+                    </table>
+                    </p>
+                    <p><h3><strong>Notes:</strong></h3>
+                    If no "<code>usetype1=24&changecoords1= -83.4293306587,43.1093973534|-83.4298674715,43.1095322567|-83.4299941965,43.1098185684</code>" change scenarios are given, then the result of the script is simply the result of running LTHIA on the "coords" argument polygon.
+                    </p>
+                    <p>The script requires either a set of <code>changecoords1</code>, <code>changecoords2</code>, etc. for each <code>usetype1</code>, <code>usetype2</code>, OR a <code>changecoords</code> default value with no number that applies to all <code>usetypeX</code> arguments without corresponding changecoords.</p>
+                    <p>Across the different change sets being iterated, such as "<code>changecoords1</code>", "<code>changecoords2</code>", etc., the changes in the previous set will be remembered for the new set. This is why the script is called 'Scenario Chain'. This is a totally different behavior than the 'Multiple Single Scenarios' script. See diagram.</p>
+                    <p><h3><strong>Legacy notes:</strong></h3> Analogous to the old script <code>/cgi-bin/tipptlux.py</code> BUT now the output is JSON format.</p>
+                    <h3><strong>Diagram:</strong></h3>
+                    <img src="chainScenarios.png" alt="Chain Scenarios Diagram" width="1156" height="183">
+                    <p><h3><strong>Examples:</strong></h3></p>
+                    <pre>
+<a target="_blank" href="/cgi-bin/lthia_scenario_chain_json.py?sessionid=Projectbig3&coords= -83.4293306587,43.1093973534|-83.4298674715,43.1095322567|-83.4299941965,43.1098185684|-83.4296076737,43.1101984135|-83.4297016006,43.1109529007|-83.4300360889,43.1117085965|-83.4300136254,43.1118900617|-83.4300272922,43.1122398431|-83.4297632881,43.1123373291|-83.4292895578,43.1124838093|-83.4288664631,43.1128592202|-83.4288767252,43.1131219851|-83.4279722459,43.1138230459|-83.4277416756,43.1141629412|-83.4273038954,43.1143725123|-83.4266055779,43.1141574423|-83.4258946825,43.1136858403|-83.4252771664,43.1135868121|-83.4251690626,43.113399129|-83.4249373929,43.1130623288|-83.4251078186,43.1117762769|-83.4252487664,43.1115142996|-83.4254535811,43.1110768837|-83.4267456099,43.1110077773|-83.4271527654,43.1106940205|-83.4277002169,43.1104560282|-83.4289708517,43.1096746437|-83.4293306587,43.1093973534&changecoords=-83.42708270721293,43.1143408892082|-83.42622440032815,43.11387097002802|-83.42635314636087,43.11336971892523|-83.42721145324565,43.113181748703234|-83.42725436858989,43.11380831386469|-83.42708270721293,43.1143408892082&usetype1=241">/cgi-bin/lthia_scenario_chain_json.py?sessionid=Projectbig3&coords= -83.4293306587,43.1093973534|-83.4298674715,43.1095322567|-83.4299941965,43.1098185684|-83.4296076737,43.1101984135|-83.4297016006,43.1109529007|-83.4300360889,43.1117085965|-83.4300136254,43.1118900617|-83.4300272922,43.1122398431|-83.4297632881,43.1123373291|-83.4292895578,43.1124838093|-83.4288664631,43.1128592202|-83.4288767252,43.1131219851|-83.4279722459,43.1138230459|-83.4277416756,43.1141629412|-83.4273038954,43.1143725123|-83.4266055779,43.1141574423|-83.4258946825,43.1136858403|-83.4252771664,43.1135868121|-83.4251690626,43.113399129|-83.4249373929,43.1130623288|-83.4251078186,43.1117762769|-83.4252487664,43.1115142996|-83.4254535811,43.1110768837|-83.4267456099,43.1110077773|-83.4271527654,43.1106940205|-83.4277002169,43.1104560282|-83.4289708517,43.1096746437|-83.4293306587,43.1093973534&changecoords=-83.42708270721293,43.1143408892082|-83.42622440032815,43.11387097002802|-83.42635314636087,43.11336971892523|-83.42721145324565,43.113181748703234|-83.42725436858989,43.11380831386469|-83.42708270721293,43.1143408892082&usetype1=241</a>
+<a target="_blank" href="/cgi-bin/lthia_scenario_chain_json.py?sessionid=Project17a&coords=-84.923,42.909|-84.746,42.893|-84.759,42.803|-84.935,42.823&changecoords1=-84.805,42.88|-84.778,42.88|-84.779,42.857|-84.805,42.857&usetype1=22&changecoords2=-84.913,42.863|-84.901,42.862|-84.902,42.831|-84.914,42.832&usetype2=232&changecoords3=-84.863,42.843|-84.809,42.843|-84.809,42.824|-84.863,42.824&usetype3=232&changecoords4=-84.913,42.899|-84.891,42.899|-84.891,42.884|-84.913,42.884&usetype4=22">/cgi-bin/lthia_scenario_chain_json.py?sessionid=Project17a&coords=-84.923,42.909|-84.746,42.893|-84.759,42.803|-84.935,42.823&changecoords1=-84.805,42.88|-84.778,42.88|-84.779,42.857|-84.805,42.857&usetype1=22&changecoords2=-84.913,42.863|-84.901,42.862|-84.902,42.831|-84.914,42.832&usetype2=232&changecoords3=-84.863,42.843|-84.809,42.843|-84.809,42.824|-84.863,42.824&usetype3=232&changecoords4=-84.913,42.899|-84.891,42.899|-84.891,42.884|-84.913,42.884&usetype4=22</a>
+                    </pre>
+              </div>
+			</div>
+		  </div>
+		  <div class="panel panel-default">
+			<div class="panel-heading">
+			  <h4 class="panel-title">
+				<a data-toggle="collapse" data-parent="#accordion2" href="#collapse4j">
+				Multiple Single Scenarios</a>
+			  </h4>
+			</div>
+			<div id="collapse4j" class="panel-collapse collapse">
+			  <div class="panel-body">
+                    <p><h3><strong>Path:</strong></h3> <code>/cgi-bin/lthia_scenario_single_json.py</code></p>
+                    <p><h3><strong>Query Parameters:</strong></h3>
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Name</th>
+                            <th>Possible values</th>
+                            <th>Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>sessionid</td>
+                            <td>A short string containing characters to denote a sessionid for temporary files, useful while testing</td>
+                            <td>Determines the names of temporary geodatabase entries. Do not concurrently use the same session id for two simultaneous requests.</td>
+                          </tr>
+                          <tr>
+                            <td>coords</td>
+                            <td>A pipe-bar separated list of comma separated <strong>Longitude,Latitude</strong> pairs</td>
+                            <td>The points must define a polygon. Determines the initial, overall bounds from which to fetch data to run LTHIA</td>
+                          </tr>
+                          <tr>
+                            <td>changecoordsX, where X is a number starting at 1 counting up sequentially</td>
+                            <td>A pipe-bar separated list of comma separated <strong>Longitude,Latitude</strong> pairs</td>
+                            <td>The points must define a polygon. For each "usetypeX", this polygon is the area in which land-use values will be replaced with the new "usetype" ID.</td>
+                          </tr>
+                          <tr>
+                            <td>changecoords</td>
+                            <td>A pipe-bar separated list of comma separated <strong>Longitude,Latitude</strong> pairs</td>
+                            <td>The points must define a polygon. This polygon is the default area in which land-use values will be replaced with the new "usetype" ID, if no "changecoordsX" is given. Never include the "changecoords" argument twice in the same query.</td>
+                          </tr>
+                          <tr>
+                            <td>usetypeX, where X is a number starting at 1 counting up sequentially</td>
+                            <td>A land-use integer ID from the land-use table that is not provided here</td>
+                            <td>Determines which land use will be used for a replacement on the map</td>
+                          </tr>
+                        </tbody>
+                    </table>
+                    </p>
+                     <p><h3><strong>Notes:</strong></h3>
+                    If no "<code>usetype1=24&changecoords1= -83.4293306587,43.1093973534|-83.4298674715,43.1095322567|-83.4299941965,43.1098185684</code>" change scenarios are given, then the result of the script is simply the result of running LTHIA on the "coords" argument polygon.
+                    </p>
+                    <p>The script requires either a set of <code>changecoords1</code>, <code>changecoords2</code>, etc. for each <code>usetype1</code>, <code>usetype2</code>, OR a <code>changecoords</code> default value with no number that applies to all <code>usetypeX</code> arguments without corresponding changecoords.</p>
+                    <p>Across the different change sets being iterated, such as "<code>changecoords1</code>", "<code>changecoords2</code>", etc., each change set is run as a totally unique scenario starting from the original LTHIA map data. See diagram.</p>
+                    <p><h3><strong>Legacy notes:</strong></h3> Analogous to the old script <code>/cgi-bin/msu3.py</code> BUT now the output is JSON format.</p>
+                    <h3><strong>Diagram:</strong></h3>
+                    <img src="singleScenarios.png" alt="Chain Scenarios Diagram" width="1156" height="183">
+                    <p><h3><strong>Examples:</strong></h3></p>
+                    <pre>
+<a target="_blank" href="/cgi-bin/lthia_scenario_single_json.py?sessionid=Projectbig3&coords= -83.4293306587,43.1093973534|-83.4298674715,43.1095322567|-83.4299941965,43.1098185684|-83.4296076737,43.1101984135|-83.4297016006,43.1109529007|-83.4300360889,43.1117085965|-83.4300136254,43.1118900617|-83.4300272922,43.1122398431|-83.4297632881,43.1123373291|-83.4292895578,43.1124838093|-83.4288664631,43.1128592202|-83.4288767252,43.1131219851|-83.4279722459,43.1138230459|-83.4277416756,43.1141629412|-83.4273038954,43.1143725123|-83.4266055779,43.1141574423|-83.4258946825,43.1136858403|-83.4252771664,43.1135868121|-83.4251690626,43.113399129|-83.4249373929,43.1130623288|-83.4251078186,43.1117762769|-83.4252487664,43.1115142996|-83.4254535811,43.1110768837|-83.4267456099,43.1110077773|-83.4271527654,43.1106940205|-83.4277002169,43.1104560282|-83.4289708517,43.1096746437|-83.4293306587,43.1093973534&changecoords=-83.42708270721293,43.1143408892082|-83.42622440032815,43.11387097002802|-83.42635314636087,43.11336971892523|-83.42721145324565,43.113181748703234|-83.42725436858989,43.11380831386469|-83.42708270721293,43.1143408892082&usetype1=241">/cgi-bin/lthia_scenario_chain_json.py?sessionid=Projectbig3&coords= -83.4293306587,43.1093973534|-83.4298674715,43.1095322567|-83.4299941965,43.1098185684|-83.4296076737,43.1101984135|-83.4297016006,43.1109529007|-83.4300360889,43.1117085965|-83.4300136254,43.1118900617|-83.4300272922,43.1122398431|-83.4297632881,43.1123373291|-83.4292895578,43.1124838093|-83.4288664631,43.1128592202|-83.4288767252,43.1131219851|-83.4279722459,43.1138230459|-83.4277416756,43.1141629412|-83.4273038954,43.1143725123|-83.4266055779,43.1141574423|-83.4258946825,43.1136858403|-83.4252771664,43.1135868121|-83.4251690626,43.113399129|-83.4249373929,43.1130623288|-83.4251078186,43.1117762769|-83.4252487664,43.1115142996|-83.4254535811,43.1110768837|-83.4267456099,43.1110077773|-83.4271527654,43.1106940205|-83.4277002169,43.1104560282|-83.4289708517,43.1096746437|-83.4293306587,43.1093973534&changecoords=-83.42708270721293,43.1143408892082|-83.42622440032815,43.11387097002802|-83.42635314636087,43.11336971892523|-83.42721145324565,43.113181748703234|-83.42725436858989,43.11380831386469|-83.42708270721293,43.1143408892082&usetype1=241</a>
+<a target="_blank" href="/cgi-bin/lthia_scenario_single_json.py?sessionid=Project18a&coords=-84.923,42.909|-84.746,42.893|-84.759,42.803|-84.935,42.823&changecoords1=-84.805,42.88|-84.778,42.88|-84.779,42.857|-84.805,42.857&usetype1=22&changecoords2=-84.913,42.863|-84.901,42.862|-84.902,42.831|-84.914,42.832&usetype2=232&changecoords3=-84.863,42.843|-84.809,42.843|-84.809,42.824|-84.863,42.824&usetype3=232&changecoords4=-84.913,42.899|-84.891,42.899|-84.891,42.884|-84.913,42.884&usetype4=22">/cgi-bin/lthia_scenario_single_json.py?sessionid=Project18a&coords=-84.923,42.909|-84.746,42.893|-84.759,42.803|-84.935,42.823&changecoords1=-84.805,42.88|-84.778,42.88|-84.779,42.857|-84.805,42.857&usetype1=22&changecoords2=-84.913,42.863|-84.901,42.862|-84.902,42.831|-84.914,42.832&usetype2=232&changecoords3=-84.863,42.843|-84.809,42.843|-84.809,42.824|-84.863,42.824&usetype3=232&changecoords4=-84.913,42.899|-84.891,42.899|-84.891,42.884|-84.913,42.884&usetype4=22</a>
+                    </pre>
+                </div>
+			</div>
+		  </div>
+		</div> 
+		<!-- end accordion -->
+	  </div>
+	</div>
+  </div>
+</div>
+</body>
+</html>

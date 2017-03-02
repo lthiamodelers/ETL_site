@@ -1,0 +1,487 @@
+montan<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>LTHIA Precalculated Runoff</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <link rel="stylesheet" href="http://nevada.agriculture.purdue.edu:8080/geoserver/openlayers3/ol.css" type="text/css">
+  <!--<script src="http://openlayers.org/en/v3.0.0/build/ol-debug.js"></script>-->
+  <script src="http://nevada.agriculture.purdue.edu:8080/geoserver/openlayers3/ol.js"></script>
+  <script
+  src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
+  crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/le-frog/jquery-ui.css" type="text/css">
+  <style>
+  body {
+    background-color: green;
+  }
+  .map {
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+  }
+  .checkboxButton {
+    width: 300px;
+  }
+  #dialog {
+    overflow: "auto";
+  }
+  .ol-popup {
+    position: absolute;
+    background-color: white;
+    -webkit-filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+    filter: drop-shadow(0 1px 4px rgba(0,0,0,0.2));
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #cccccc;
+    bottom: 12px;
+    left: -50px;
+    min-width: 280px;
+  }
+  .ol-popup:after, .ol-popup:before {
+    top: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+  .ol-popup:after {
+    border-top-color: white;
+    border-width: 10px;
+    left: 48px;
+    margin-left: -10px;
+  }
+  .ol-popup:before {
+    border-top-color: #cccccc;
+    border-width: 11px;
+    left: 48px;
+    margin-left: -11px;
+  }
+  .ol-popup-closer {
+    text-decoration: none;
+    position: absolute;
+    top: 2px;
+    right: 8px;
+  }
+  .ol-popup-closer:after {
+    content: "?";
+  }
+  .checkboxButtonRight.ui-checkboxradio-checked,
+  .checkboxButtonRight.ui-checkboxradio-checked:hover,
+  .checkboxButtonRight.ui-button:active      {
+    border:1px solid #770000;
+    background:#ff0000;
+  }
+  table {
+    font-family: arial, sans-serif;
+    font-size: 13px;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  tr:nth-child(even) {
+    background-color: #228822;
+  }
+  </style>
+</head>
+<body>
+  <!-- ui-dialog on the left -->
+  <div id="dialog" title="LTHIA Pre-cached Runoff">
+    <div id="dialogContent">
+        <div id="settingsContent">
+            <fieldset>
+                <legend>Region Type: </legend>
+                <label for="huc12">HUC12</label>
+                <input type="radio" name="huc12" id="huc12" value="huc12" class="regionType" checked=true>
+                <label for="county">County</label>
+                <input type="radio" name="huc12" id="county" value="county" class="regionType">
+            </fieldset>
+            <fieldset>
+                <legend>Selection Type: </legend>
+                <label for="singleSelect">Single</label>
+                <input type="radio" name="selectType" id="singleSelect" value="singleSelect" class="selectType" checked=true>
+                <label for="multipleSelect">Multiple</label>
+                <input type="radio" name="selectType" id="multipleSelect" value="multipleSelect" class="selectType">
+            </fieldset>
+            <p>
+            Please click a map region on the left to begin.
+            </p>
+            <p><a href="help.html" target="_blank"><input type="button" value="Developer Guide"/></a></p>
+        </div>
+        <div id="resultsContent" style="display:none;">
+        </div>
+    </div>
+  </div>
+  <!-- dialog end -->
+  <div class="container" style="width:100%;">
+    <div class="row">
+      <div id="map" class="map"></div>
+      <script>
+var features = [];
+var selectedFeatureIndex;
+var geoJsonFormat = new ol.format.GeoJSON();
+var currentHUC12 = null;
+
+function getParameterByName(name, url) {
+    if (!url) {
+      url = window.location.href;
+    }
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+var image = new ol.style.Circle({
+  radius: 5,
+  fill: null,
+  stroke: new ol.style.Stroke({color: 'red', width: 1})
+});
+
+var styles = {
+  'Point': [new ol.style.Style({
+    image: image
+  })],
+  'LineString': [new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: 'green',
+      width: 1
+    })
+  })],
+  'MultiLineString': [new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: 'green',
+      width: 1
+    })
+  })],
+  'MultiPoint': [new ol.style.Style({
+    image: image
+  })],
+  'MultiPolygon': [new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: 'rgb(0,255,0)',
+      width: 1
+    }),
+    fill: new ol.style.Fill({
+      color: 'rgba(0, 255, 0, 0.6)'
+    })
+  })],
+  'Polygon': [new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: 'blue',
+      lineDash: [4],
+      width: 3
+    }),
+    fill: new ol.style.Fill({
+      color: 'rgba(0, 0, 255, 0.1)'
+    })
+  })],
+  'GeometryCollection': [new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: 'magenta',
+      width: 2
+    }),
+    fill: new ol.style.Fill({
+      color: 'magenta'
+    }),
+    image: new ol.style.Circle({
+      radius: 10,
+      fill: null,
+      stroke: new ol.style.Stroke({
+        color: 'magenta'
+      })
+    })
+  })],
+  'Circle': [new ol.style.Style({
+    stroke: new ol.style.Stroke({
+      color: 'red',
+      width: 2
+    }),
+    fill: new ol.style.Fill({
+      color: 'rgba(255,0,0,0.2)'
+    })
+  })]
+};
+
+var styleFunction = function(feature, resolution) {
+  return styles[feature.getGeometry().getType()];
+};
+
+var vectorSource = new ol.source.Vector({
+  features: features
+});
+var vectorLayer = new ol.layer.Vector({
+  title: 'the data of zones',
+  source: vectorSource,
+  style: styleFunction
+});
+
+
+var raster = new ol.layer.Tile({
+  source: new ol.source.OSM()
+});
+
+var pythonArgName = null;
+var polygonMode = null;
+var selectionMode = null;
+var regionLayer = null;
+var barTimer = null;
+var barTimerTick = 250;
+var hucsAsTiles = new ol.layer.Tile({
+  source: new ol.source.TileWMS({
+    url: 'http://lthia.agriculture.purdue.edu:8080/geoserver/wms',
+      params: {'FORMAT': 'image/png',
+      'VERSION': '1.1.1',  
+      LAYERS: "etf:GMV_HUC12a",
+      TILED: false,
+      srs: 'EPSG:3857',
+      transparent: true,
+    }
+  })
+});
+var countiesAsTiles = new ol.layer.Tile({
+  source: new ol.source.TileWMS({
+    url: 'http://lthia.agriculture.purdue.edu:8080/geoserver/wms',
+      params: {'FORMAT': 'image/png',
+      'VERSION': '1.1.1',  
+      LAYERS: "etf:GMV_county",
+      TILED: false,
+      srs: 'EPSG:3857',
+      transparent: true,
+    }
+  })
+});
+var greaterMississippi = new ol.layer.Tile({
+  source: new ol.source.TileWMS({
+    url: 'http://lthia.agriculture.purdue.edu:8080/geoserver/wms',
+    params: {'FORMAT': 'image/png',
+      'VERSION': '1.1.1',  
+      LAYERS: 'etf:GMV_HUC2',
+      TILED: false,
+      srs: 'EPSG:3857',
+      transparent: true,
+    }
+  })
+});
+var map = new ol.Map({
+  layers: [raster, greaterMississippi, hucsAsTiles, vectorLayer],
+  target: 'map',
+  controls: ol.control.defaults({
+    attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+      collapsible: false
+    })
+  }),
+  view: new ol.View({
+    zoom: 7.7,
+    center: [-9294291.13139962, 4790308.222170888]
+  })
+});
+map.on("click", function(e) {
+  var lonlat = ol.proj.transform(e.coordinate, 'EPSG:3857', 'EPSG:4326');
+  var lon = lonlat[0];
+  var lat = lonlat[1];
+
+  $.getJSON({
+    url: "http://lthia.agriculture.purdue.edu/geoserver/wfs?request=GetFeature&srsName=EPSG:3857&version=1.0.0&typeName="+regionLayer+"&outputFormat=application%2Fjson&FILTER=%3CFilter%20xmlns=%22http://www.opengis.net/ogc%22%20xmlns:gml=%22http://www.opengis.net/gml%22%3E%3CIntersects%3E%3CPropertyName%3Ethe_geom%3C/PropertyName%3E%3Cgml:Point%20srsName=%22EPSG:4326%22%3E%3Cgml:coordinates%3E"+lon+","+lat+"%3C/gml:coordinates%3E%3C/gml:Point%3E%3C/Intersects%3E%3C/Filter%3E",
+    success: function(geoJson) {
+      console.log(geoJson);
+      features = geoJsonFormat.readFeatures(geoJson);//, {featureProjection:"EPSG:3857"});
+      if( selectionMode == "singleSelect" ) {
+            vectorSource.clear();
+      }
+      if( features.length > 0 ) {
+        var myFeature = features[0];
+        var properties = myFeature.getProperties();
+        var dialogContent;
+        var regionIdKey;
+        if( polygonMode == "county") {
+            regionIdKey = 'FIPS';
+        } else {
+            regionIdKey = 'HUC12';
+        }
+        var nextRegionId = properties[regionIdKey];
+        if( polygonMode == "county") {
+            dialogContent = "<p><strong>5-digit FIPS code:</strong> "+nextRegionId+"<br><strong>Name:</strong> "+properties['NAME']+"<br><strong>State:</strong> "+properties['STATE_NAME']+"<br><strong>Area in Acres: </strong>"+properties['AREAACRES']+"</p>";
+        } else {
+            dialogContent = "<p><strong>HUC12:</strong> "+nextRegionId+"<br><strong>Name:</strong> "+properties['Name']+"<br><strong>Area in Acres: </strong>"+properties['AreaAcres']+"</p>";
+        }
+        if( selectionMode === "multipleSelect" ) {
+            if( $.inArray(nextRegionId, currentHUC12) > -1) {
+                for(var i = 0; i < vectorSource.getFeatures().length; i++) {
+                    var feature = vectorSource.getFeatures()[i];
+                    if( feature.getProperties()[regionIdKey] === nextRegionId ) {
+                        vectorSource.removeFeature(feature);
+                        currentHUC12.splice( $.inArray(nextRegionId, currentHUC12), 1);
+                    }
+                }
+            } else {
+                currentHUC12.push(nextRegionId);
+                vectorSource.addFeatures(features);
+            }
+        } else {
+            currentHUC12 = nextRegionId;
+            vectorSource.addFeatures(features);
+        }
+        console.log(currentHUC12);
+        vectorLayer.setStyle(styleFunction); // nonsense call to notify vector layer of update to features
+        $("#resultsContent").html(dialogContent);
+        $("#resultsContent").css("display","block");
+        $("#settingsContent").css("display","none");
+      }
+    },
+    error: function(e) {
+        alert("Error from GeoServer when retrieving GeoJSON");
+        console.log(e.responseText);
+    }
+  });
+});
+
+$( "#dialog" ).dialog({
+  closeOnEscape: false,
+  autoOpen: true,
+  width: 400,
+  height: 600,
+  buttons: [
+  {
+    text: "Restart",
+    click: function() {
+        $("#resultsContent").css("display","none");
+        $("#settingsContent").css("display","block");
+        
+    }
+  },
+  {
+    text: "Run LTHIA",
+    click: function() {
+      if(currentHUC12 == null) {
+        alert("You must first choose a region on which to run the model");
+        return;
+      }
+      $("#resultsContent").html("<p>Loading...</p><br><div id='progressbar'></div>");
+      $("#resultsContent").css("display","block");
+      $("#settingsContent").css("display","none");
+      $.getJSON({
+        url: "http://lthia.agriculture.purdue.edu/cgi-bin/"+pythonArgName+"="+currentHUC12,
+        success: function(tableJSON) {
+          tableData = tableJSON;
+          tableHTML = "<table><tr><th>Landuse</th><th>Soil group</th><th>Area(acres)</th><th>Runoff(acreft)</th><th>Total Suspended Sediment (lbs)</th><th>Total Phosphorous (lbs)</th><th>Total Nitrogen (lbs)</th><th>Total Lead (lbs)</th><th>Total Copper (lbs)</th><th>Total Zinc (lbs)</th></tr>";
+          var acreFtPerCubicMeter = 0.000810713194;
+          var totalArea = 0;
+          var totalRunoff = 0;
+          var columnTotals = {
+            tss: 0,
+            tp: 0,
+            tn: 0,
+            tl: 0,
+            tc: 0,
+            tz: 0
+          };
+          for(var i = 0; i < tableData.length; i++) {
+            var tableRow = tableData[i];
+            var area = tableRow.areaAcres;
+            totalArea += area;
+            columnTotals.tss += tableRow.tss;
+            columnTotals.tp += tableRow.tp;
+            columnTotals.tn += tableRow.tn;
+            columnTotals.tl += tableRow.tl;
+            columnTotals.tc += tableRow.tc;
+            columnTotals.tz += tableRow.tz;
+            totalRunoff += tableRow.runoff*acreFtPerCubicMeter;
+            tableHTML += "<tr><td>" + tableRow.landuse + "</td><td>" + tableRow.soil + "</td><td>" + area.toFixed(2) + "</td><td>"+(tableRow.runoff*acreFtPerCubicMeter).toFixed(2)+"</td><td>"+tableRow.tss.toFixed(2)+"</td><td>"+tableRow.tp.toFixed(2)+"</td><td>"+tableRow.tn.toFixed(2)+"</td><td>"+tableRow.tl.toFixed(2)+"</td><td>"+tableRow.tc.toFixed(2)+"</td><td>"+tableRow.tz.toFixed(2)+"</td></tr>";
+          }
+          tableHTML += "<tr><td>" + "Total" + "</td><td></td><td>" + totalArea.toFixed(2) + "</td><td>"+totalRunoff.toFixed(2)+"</td><td>" + columnTotals.tss.toFixed(2) + "</td><td>" + columnTotals.tp.toFixed(2) + "</td><td>" + columnTotals.tn.toFixed(2) + "</td><td>" + columnTotals.tl.toFixed(2) + "</td><td>" + columnTotals.tc.toFixed(2) + "</td><td>" + columnTotals.tz.toFixed(2) + "</td></tr>";
+          tableHTML += "</table>";
+          $("#resultsContent").html(tableHTML);
+          if( barTimer ) {
+            clearTimeout(barTimer);
+          }
+        },
+        error: function(){
+            alert("Error from python code when running ETL cgi");
+            if( barTimer ) {
+            clearTimeout(barTimer);
+            }
+        }
+      });
+      var prog = 0;
+      if( typeof currentHUC12 === 'string' || !(currentHUC12) ) {
+        barTimerTick = 250;
+      } else {
+        barTimerTick = 250*currentHUC12.length;
+      }
+      var tickBar = function() {
+        $( function() {
+          prog += 3;
+          if( $( "#progressbar" ).progressbar({
+            value: prog
+          }) && prog < 100 ) {
+            barTimer = setTimeout(tickBar, barTimerTick);
+          }
+        } );
+      };
+      barTimer = setTimeout(tickBar, barTimerTick);
+    }
+  }
+  ],
+  position: { my: "right top", at: "right top", of: window },
+  open: function(event, ui) {
+    $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+    //$( "input.regionType" ).checkboxradio();
+    //$( "input.selectType" ).checkboxradio();
+    //$( "fieldset" ).controlgroup();
+    var regionClickHandler = function(evt) {
+        var value = $("input[name='huc12']:radio:checked").val();
+        if( value === "huc12" ) {
+            map.getLayers().setAt(2,hucsAsTiles);
+            pythonArgName = "lthia_sum_huc12s_json.py?huclist"; // for args in cgi-bin/etl.py
+            polygonMode = "huc12";
+            regionLayer = "etf:GMV_HUC12a"
+        } else {
+            map.getLayers().setAt(2,countiesAsTiles);
+            pythonArgName = "lthia_sum_counties_json.py?fipslist"; // for args in cgi-bin/etl.py
+            polygonMode = "county";
+            regionLayer = "etf:GMV_county"
+        }
+        vectorSource.clear();
+        vectorLayer.setStyle(styleFunction);
+        if( $("input[name='selectType']:radio:checked").val() === "multipleSelect" ) {
+            currentHUC12 = [];
+        } else {
+            currentHUC12 = null;
+        }
+    };
+    var selectionClickHandler = function(evt) {
+        var value = $("input[name='selectType']:radio:checked").val();
+        selectionMode = value;
+        vectorSource.clear();
+        vectorLayer.setStyle(styleFunction);
+        if( value === "multipleSelect" ) {
+            currentHUC12 = [];
+        } else {
+            currentHUC12 = null;
+        }
+    };
+    $( "input.regionType" ).on('click', regionClickHandler);
+    $( "input.selectType" ).on('click', selectionClickHandler);
+    regionClickHandler();
+    selectionClickHandler();
+  }
+});
+
+      </script>
+    </div>
+  </div>
+</body>
+</html>
