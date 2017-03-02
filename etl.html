@@ -1,4 +1,4 @@
-montan<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <title>LTHIA Precalculated Runoff</title>
@@ -241,7 +241,7 @@ var barTimer = null;
 var barTimerTick = 250;
 var hucsAsTiles = new ol.layer.Tile({
   source: new ol.source.TileWMS({
-    url: 'http://lthia.agriculture.purdue.edu:8080/geoserver/wms',
+    url: 'http://montana.agriculture.purdue.edu:8080/geoserver/wms',
       params: {'FORMAT': 'image/png',
       'VERSION': '1.1.1',  
       LAYERS: "etf:GMV_HUC12a",
@@ -253,7 +253,7 @@ var hucsAsTiles = new ol.layer.Tile({
 });
 var countiesAsTiles = new ol.layer.Tile({
   source: new ol.source.TileWMS({
-    url: 'http://lthia.agriculture.purdue.edu:8080/geoserver/wms',
+    url: 'http://montana.agriculture.purdue.edu:8080/geoserver/wms',
       params: {'FORMAT': 'image/png',
       'VERSION': '1.1.1',  
       LAYERS: "etf:GMV_county",
@@ -265,7 +265,7 @@ var countiesAsTiles = new ol.layer.Tile({
 });
 var greaterMississippi = new ol.layer.Tile({
   source: new ol.source.TileWMS({
-    url: 'http://lthia.agriculture.purdue.edu:8080/geoserver/wms',
+    url: 'http://montana.agriculture.purdue.edu:8080/geoserver/wms',
     params: {'FORMAT': 'image/png',
       'VERSION': '1.1.1',  
       LAYERS: 'etf:GMV_HUC2',
@@ -294,7 +294,7 @@ map.on("click", function(e) {
   var lat = lonlat[1];
 
   $.getJSON({
-    url: "http://lthia.agriculture.purdue.edu/geoserver/wfs?request=GetFeature&srsName=EPSG:3857&version=1.0.0&typeName="+regionLayer+"&outputFormat=application%2Fjson&FILTER=%3CFilter%20xmlns=%22http://www.opengis.net/ogc%22%20xmlns:gml=%22http://www.opengis.net/gml%22%3E%3CIntersects%3E%3CPropertyName%3Ethe_geom%3C/PropertyName%3E%3Cgml:Point%20srsName=%22EPSG:4326%22%3E%3Cgml:coordinates%3E"+lon+","+lat+"%3C/gml:coordinates%3E%3C/gml:Point%3E%3C/Intersects%3E%3C/Filter%3E",
+    url: "http://montana.agriculture.purdue.edu/geoserver/wfs?request=GetFeature&srsName=EPSG:3857&version=1.0.0&typeName="+regionLayer+"&outputFormat=application%2Fjson&FILTER=%3CFilter%20xmlns=%22http://www.opengis.net/ogc%22%20xmlns:gml=%22http://www.opengis.net/gml%22%3E%3CIntersects%3E%3CPropertyName%3Ethe_geom%3C/PropertyName%3E%3Cgml:Point%20srsName=%22EPSG:4326%22%3E%3Cgml:coordinates%3E"+lon+","+lat+"%3C/gml:coordinates%3E%3C/gml:Point%3E%3C/Intersects%3E%3C/Filter%3E",
     success: function(geoJson) {
       console.log(geoJson);
       features = geoJsonFormat.readFeatures(geoJson);//, {featureProjection:"EPSG:3857"});
@@ -374,6 +374,7 @@ $( "#dialog" ).dialog({
       $("#settingsContent").css("display","none");
       $.getJSON({
         url: "http://lthia.agriculture.purdue.edu/cgi-bin/"+pythonArgName+"="+currentHUC12,
+        //keeping this call to lthia instead of montana to avoid repetition - keeping lthia on lthia server
         success: function(tableJSON) {
           tableData = tableJSON;
           tableHTML = "<table><tr><th>Landuse</th><th>Soil group</th><th>Area(acres)</th><th>Runoff(acreft)</th><th>Total Suspended Sediment (lbs)</th><th>Total Phosphorous (lbs)</th><th>Total Nitrogen (lbs)</th><th>Total Lead (lbs)</th><th>Total Copper (lbs)</th><th>Total Zinc (lbs)</th></tr>";
