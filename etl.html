@@ -373,8 +373,7 @@ $( "#dialog" ).dialog({
       $("#resultsContent").css("display","block");
       $("#settingsContent").css("display","none");
       $.getJSON({
-        url: "http://lthia.agriculture.purdue.edu/cgi-bin/"+pythonArgName+"="+currentHUC12,
-        //keeping this call to lthia instead of montana to avoid repetition - keeping lthia on lthia server
+        url: "http://montana.agriculture.purdue.edu/cgi-bin/"+pythonArgName+"="+currentHUC12,
         success: function(tableJSON) {
           tableData = tableJSON;
           tableHTML = "<table><tr><th>Landuse</th><th>Soil group</th><th>Area(acres)</th><th>Runoff(acreft)</th><th>Total Suspended Sediment (lbs)</th><th>Total Phosphorous (lbs)</th><th>Total Nitrogen (lbs)</th><th>Total Lead (lbs)</th><th>Total Copper (lbs)</th><th>Total Zinc (lbs)</th></tr>";
