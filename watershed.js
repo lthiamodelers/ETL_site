@@ -9,10 +9,23 @@
    STEPL Spreadsheet
 
 */
-let http = require('http');
+let express = require("express");
+let app = express();
+let http = require("http").Server(app);
 let PORT_NUMBER = 8000;
+let request = require("request");
 
-http.createServer(function (req, res) {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.end('Hello Apache!\n');
-}).listen(PORT_NUMBER, '127.0.0.1');
+//-------------------
+//--Set up Server----
+//-------------------
+
+http.listen(PORT_NUMBER, function(){
+	console.log("Listening on port " + PORT_NUMBER);
+});
+
+
+app.get("/", function(req, res){
+	console.log("Serving index.html...");
+	res.sendFile(__dirname + "/public/index.html");
+});
+
