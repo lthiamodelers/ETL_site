@@ -243,8 +243,8 @@ var hucsAsTiles = new ol.layer.Tile({
   source: new ol.source.TileWMS({
     url: 'http://montana.agriculture.purdue.edu:8080/geoserver/wms',
       params: {'FORMAT': 'image/png',
-      'VERSION': '1.1.1',  
-      LAYERS: "etf:GMV_HUC12a",
+      'VERSION': '1.1.0',  
+      LAYERS: "GMV:GMV_HUC12a",
       TILED: false,
       srs: 'EPSG:3857',
       transparent: true,
@@ -256,7 +256,7 @@ var countiesAsTiles = new ol.layer.Tile({
     url: 'http://montana.agriculture.purdue.edu:8080/geoserver/wms',
       params: {'FORMAT': 'image/png',
       'VERSION': '1.1.1',  
-      LAYERS: "etf:GMV_county",
+      LAYERS: "GMV:GMV_county",
       TILED: false,
       srs: 'EPSG:3857',
       transparent: true,
@@ -268,7 +268,7 @@ var greaterMississippi = new ol.layer.Tile({
     url: 'http://montana.agriculture.purdue.edu:8080/geoserver/wms',
     params: {'FORMAT': 'image/png',
       'VERSION': '1.1.1',  
-      LAYERS: 'etf:GMV_HUC2',
+      LAYERS: 'GMV:GMV_HUC2',
       TILED: false,
       srs: 'EPSG:3857',
       transparent: true,
@@ -447,12 +447,12 @@ $( "#dialog" ).dialog({
             map.getLayers().setAt(2,hucsAsTiles);
             pythonArgName = "lthia_sum_huc12s_json.py?huclist"; // for args in cgi-bin/etl.py
             polygonMode = "huc12";
-            regionLayer = "etf:GMV_HUC12a"
+            regionLayer = "GMV:GMV_HUC12a"
         } else {
             map.getLayers().setAt(2,countiesAsTiles);
             pythonArgName = "lthia_sum_counties_json.py?fipslist"; // for args in cgi-bin/etl.py
             polygonMode = "county";
-            regionLayer = "etf:GMV_county"
+            regionLayer = "GMV:GMV_county"
         }
         vectorSource.clear();
         vectorLayer.setStyle(styleFunction);
